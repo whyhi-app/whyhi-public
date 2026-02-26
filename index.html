@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>WhyHi Help</title>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+/* ══════════════════════════════════════════════════════════
+   WhyHi Support Bot v2 — Conversation Thread Styles
+   Design: iMessage-style, dark theme, Figtree, Material Icons
+   Bot messages left, user selections right.
+   ══════════════════════════════════════════════════════════ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Figtree', -apple-system, sans-serif;
+  background: #000a14;
+  color: #fff;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.conv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #0a1420;
+  border-bottom: 1px solid #4B4B4B;
+  flex-shrink: 0;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.conv-header-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.start-over-btn {
+  font-size: 13px;
+  font-weight: 500;
+  color: #007AFF;
+  background: none;
+  border: 1px solid rgba(0, 122, 255, 0.3);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+.start-over-btn:active { background: rgba(0, 122, 255, 0.08); }
+
+/* ── Thread (scrollable conversation) ───────────────────── */
+.thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 12px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Message Rows ────────────────────────────────────────── */
+.msg-row {
+  display: flex;
+  max-width: 100%;
+}
+.msg-row.bot  { justify-content: flex-start; }
+.msg-row.user { justify-content: flex-end; }
+
+/* Extra top gap when sender changes (new "group" in the thread) */
+.msg-row.gap-top { margin-top: 10px; }
+
+/* ── Bot Bubble ──────────────────────────────────────────── */
+.bot-bubble-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e8f0f8;
+  margin-bottom: 6px;
+}
+
+.bot-bubble {
+  background: #1c2a36;
+  color: #d8e4f0;
+  border-radius: 18px 18px 18px 4px;
+  padding: 10px 14px;
+  max-width: 80%;
+  font-size: 15px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+/* ── User Bubble ─────────────────────────────────────────── */
+.user-bubble {
+  background: #007AFF;
+  color: #fff;
+  border-radius: 18px 18px 4px 18px;
+  padding: 10px 14px;
+  max-width: 80%;
+  font-size: 15px;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+/* ── Chip Cloud (bot presenting options) ─────────────────── */
+.msg-row.chip-row { align-items: flex-start; }
+
+.chip-cloud {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 88%;
+}
+
+/* ── Conversation Chips (L1 and L2 options) ──────────────── */
+.conv-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+  width: 100%;
+}
+.conv-chip:active { background: rgba(255, 255, 255, 0.06); }
+
+.conv-chip-icon { font-size: 20px; flex-shrink: 0; }
+.conv-chip-label { flex: 1; }
+
+/* ── CTA Cloud ───────────────────────────────────────────── */
+.cta-cloud { gap: 7px; }
+
+.cta-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  background: transparent;
+  border: 1.5px solid;
+  border-radius: 24px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.12s;
+}
+.cta-chip .material-icons { font-size: 18px; flex-shrink: 0; }
+
+/* Take me there — blue */
+.cta-primary { border-color: rgba(0, 122, 255, 0.5); color: #007AFF; }
+.cta-primary:active { background: rgba(0, 122, 255, 0.1); }
+
+/* Contact support — amber */
+.cta-support { border-color: rgba(255, 152, 0, 0.4); color: #ff9800; }
+.cta-support:active { background: rgba(255, 152, 0, 0.08); }
+
+/* Navigation (cross-link) — cyan */
+.cta-nav { border-color: rgba(0, 200, 255, 0.35); color: #00c8ff; }
+.cta-nav:active { background: rgba(0, 200, 255, 0.08); }
+
+/* ── Illustration Placeholder ────────────────────────────── */
+.illustration-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px dashed #2a3a4a;
+  border-radius: 16px;
+  max-width: 88%;
+}
+.illustration-icon { font-size: 26px; color: #445; flex-shrink: 0; }
+.illustration-label { font-size: 13px; color: #6688aa; line-height: 1.4; }
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1c2a36; border-radius: 2px; }
+
+/* ── Safe Area (iPhone notch + home bar) ─────────────────── */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .conv-header {
+    padding-top: calc(12px + env(safe-area-inset-top));
+  }
+  .thread {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+// ══════════════════════════════════════════════════════════
+// WhyHi Support Bot v2 — Conversation Mode
+// Thread builds like a chat: bot left, user selections right.
+// No page navigation — chips answered inline, content flows down.
+// ══════════════════════════════════════════════════════════
+
+// ── Decision Tree (v4 final) ───────────────────────────────
+const TREE = {
+
+  connections: {
+    label: 'Connections',
+    icon: 'people',
+    color: '#007AFF',
+    items: {
+      'manage-connections': {
+        label: 'Manage Connections',
+        content: "Your WhyHi circle.\nPeople you\u2019ve chosen to connect with.\nPeople you can actually talk to.\n\n\u2022 Real conversations\n\u2022 No typing texts\n\u2022 No random noise",
+        ctas: [{ type: 'take_me_there' }]
+      },
+      'requests': {
+        label: 'Requests',
+        content: "Connection is by mutual consent. You can:\n\n\u2022 Send a request\n\u2022 Accept one\n\u2022 Decline one\n\nNo connection = no calls or messages.\nSimple. Intentional.",
+        ctas: [{ type: 'take_me_there' }]
+      },
+      'find-whyhi-member': {
+        label: 'Find WhyHi Member',
+        content: "The WhyHi directory.\n\nFind folks who want to talk, not text. From here you can:\n\n\u2022 Send a connection request\n\u2022 See what\u2019s pending\n\u2022 Accept or decline invites\n\u2022 Spot users you\u2019ve blocked\n\nOnly members who are Connections can call each other.",
+        ctas: [{ type: 'take_me_there' }]
+      },
+      'invite-people': {
+        label: 'Invite People',
+        content: "Hear the voices of those you care about, more often.\n\nTapping \u201cInvite People\u201d will pull up your phone\u2019s contact list. Choose a contact and we\u2019ll SMS them a link to download from the App Store.\n\nOne text.\nNo spam.\nEasy peasy, lemon squeezy!",
+        ctas: [{ type: 'take_me_there' }]
+      },
+      'blocking': {
+        label: 'Blocking a User',
+        content: "You can block any WhyHi account, anytime.\n\nWhen blocked, that user:\n\u2022 cannot call you\n\u2022 cannot open a Call Lobby room with you (message you)\n\u2022 You disappear from their view, including in the WhyHi directory\n\nOnce blocked, it stays that way indefinitely unless you unblock them. WhyHi is a closed, trusted network and we take safety very seriously.",
+        ctas: [{ type: 'take_me_there' }]
+      },
+      'connection-stats': {
+        label: 'Connection Stats',
+        content: "Connection Stats are little factoids about how you and your call buddy connect. On each Connection\u2019s profile you\u2019ll see:\n\n\u2022 Last call date\n\u2022 Average call duration\n\u2022 Calls per month\n\nDoes knowledge lead to action? Only you know!",
+        ctas: []
+      }
+    }
+  },
+
+  calling: {
+    label: 'Calling',
+    icon: 'phone',
+    color: '#4caf50',
+    items: {
+      'basics': {
+        label: 'Basics',
+        content: "WhyHi provides context, before connecting. What does that mean?\n\nInstead of just seeing a name when someone calls, on an incoming WhyHi call you see:\n\n\u2022 Why they\u2019re calling (connection, support, question\u2026)\n\u2022 How long they\u2019d like to talk (2 min, 5 min, 30 min\u2026)\n\nAll WhyHi calls are time-bound, known up front for both people. Now you\u2019ll always know that you\u2019ve got the time and energy to take the call.\n\nEasier to call, easier to pick up: that\u2019s how you restore the joy in live connection.",
+        ctas: [{ type: 'nav', l1: 'calling', l2: 'when-time-is-up', l3: null, label: 'what happens when the call duration is up' }],
+        illustration: 'Animation: Caller selects context \u2192 recipient sees incoming call with context'
+      },
+      'when-time-is-up': {
+        label: 'When Time Is Up',
+        content: "Ever seen award-shows play the walk-off music when the winner\u2019s speech goes on too long?\n\nWhen your call duration is up, gentle music slowly fades in, on both phones.\n\nWant 10 minutes more? On the WhyHi screen, both parties hit the Snooze button.\n\nWhyHi calls are built on mutual clarity.\nNo open-ended uncertainty.\nJust connection by choice.",
+        ctas: [{ type: 'nav', l1: 'calling', l2: 'calling-non-whyhi-verification', l3: null, label: 'calling non-WhyHi phones' }],
+        illustration: 'Illustration: WhyHi screen with Snooze button'
+      },
+      'calling-non-whyhi-verification': {
+        label: 'Calling Non-WhyHi Phones \u2013 Verification',
+        content: "You can call people who are not on WhyHi with one quick step.\n\nYou\u2019ll need to verify your number with our network provider, Twilio, just once.\nYou\u2019ll receive a phone call (not SMS verification) from Twilio, with a spoken code.\nEnter it on the call and you\u2019re done.\nYour number is not made public \u2014 it\u2019s just so your name shows up when you call your friends.\n\nYou were prompted to do this when you signed up, but if you didn\u2019t finish you can do so here:\nUntil you verify you\u2019ll only be able to call other WhyHi members. It\u2019s easy, do it!",
+        ctas: [
+          { type: 'verify_me_now' },
+          { type: 'nav', l1: 'calling', l2: 'calling-non-whyhi-what-they-see', l3: null, label: 'calling non-WhyHi: what they see' }
+        ],
+        illustration: 'Illustration: PSTN / Twilio verification screen'
+      },
+      'calling-non-whyhi-what-they-see': {
+        label: 'Calling Non-WhyHi Phones \u2013 What They See',
+        content: "Because your recipient hasn\u2019t downloaded WhyHi, they won\u2019t get the full experience. But they can still see your context prior to your call.\n\nWhen you place your non-WhyHi call, they\u2019ll first get an SMS from us:\n\n\u2022 Your name\n\u2022 Why you\u2019re calling\n\u2022 For how long\n\nEx: [AuthUser display_name] is calling, 10 min connection\n\nThen 5\u201310 seconds later, your call comes through.\n\nFor full WhyHi calls with context on incoming, they\u2019ll have to download the app.",
+        ctas: []
+      }
+    }
+  },
+
+  'callback-scheduler': {
+    label: 'Callback Scheduler',
+    icon: 'call_missed_outgoing',
+    color: '#ff9800',
+    items: {
+      'what-it-does': {
+        label: 'What It Does',
+        content: "We all say \u201cI\u2019ll call you back.\u201d We all forget!\n\nThe Callback Scheduler fixes that. With one tap, it:\n\n\u2022 Ends the call cleanly\n\u2022 Instantly notifies your caller of your planned callback time\n\u2022 Later, reminds you at that time.\n\nThe Callback Scheduler does not place the callback. It just automates your follow-through, super easy.",
+        ctas: [{ type: 'nav', l1: 'callback-scheduler', l2: 'how-to-trigger', l3: null, label: 'how to trigger it' }]
+      },
+      'how-to-trigger': {
+        label: 'How to Trigger',
+        content: "1. You get an incoming call. You can\u2019t pick up.\n2. On the incoming iOS call screen, tap \u201cMessage\u201d\n2. Choose \u201cCustom\u201d\n3. This will bring up the WhyHi Callback Scheduler screen.\n4. Pick a callback time from a few options.\n\nThat\u2019s it.\nCommitment locked.",
+        ctas: [{ type: 'nav', l1: 'callback-scheduler', l2: 'once-scheduled', l3: null, label: 'once callback is scheduled' }],
+        illustration: 'Animation: iOS \u2192 Message \u2192 Custom \u2192 WhyHi \u2192 checkmark confirmation'
+      },
+      'once-scheduled': {
+        label: 'Once Callback is Scheduled',
+        content: "Once you\u2019ve set a callback time:\n\n\u2022 The call attempt ends\n\u2022 Your caller is instantly notified of your callback time\n\u2022 You get a reminder, at that later time.\n\nNo chasing, no annoying texting, no forgetting. This (and incoming calls) is why WhyHi notifications must be ON.",
+        ctas: [{ type: 'nav', l1: 'settings', l2: 'notifications', l3: null, label: 'notification settings' }]
+      }
+    }
+  },
+
+  'call-lobby': {
+    label: 'Call Lobby',
+    icon: 'groups',
+    color: '#9c27b0',
+    items: {
+      'whats-the-lobby': {
+        label: "What\u2019s the Call Lobby?",
+        content: "You shouldn\u2019t need 15 typed text messages to schedule one call. Now you don\u2019t.\n\nThe Call Lobby is a way to quickly agree on a future call time with your Connection, just by tapping buttons.",
+        ctas: [{ type: 'nav', l1: 'call-lobby', l2: 'how-it-works', l3: null, label: 'how it works' }]
+      },
+      'how-it-works': {
+        label: 'How the Call Lobby Works',
+        content: "When you open a Call Lobby with a Connection, you pick:\n\n\u2022 A reason\n\u2022 A timeframe\n\nProposed times don\u2019t fit?\nCounter once or twice until you find a time that works.\n\nWhen agreed:\n\u2022 Recipient gets immediately notified, confirming the time.\n\u2022 Caller gets a reminder, later, at call time\n\nSpend your time talking, not texting.",
+        ctas: [{ type: 'take_me_there' }],
+        illustration: 'placeholder animation showing back and forth call lobby messages'
+      }
+    }
+  },
+
+  settings: {
+    label: 'Settings',
+    icon: 'settings',
+    color: '#607d8b',
+    items: {
+      'edit-profile': {
+        label: 'Edit Profile',
+        content: "Update your details anytime.\n\nExcept your phone number, which is how you log in. You can\u2019t change it here.\n\nIf you need to change your phone number, contact support.",
+        ctas: [{ type: 'take_me_there' }]
+      },
+      'notifications': {
+        label: 'Notifications',
+        content: "WhyHi Notifications must be ON.\n\nOtherwise:\n\u2022 No incoming calls\n\u2022 No callback reminders\n\u2022 No call lobby reminders\n\nWe won\u2019t spam you. It\u2019s only what matters.",
+        ctas: [{ type: 'take_me_there' }],
+        illustration: 'Illustration: iOS notification settings screenshot'
+      },
+      'blocked-users': {
+        label: 'Blocked Users',
+        content: "Direct link to your blocked users list.",
+        ctas: []
+      },
+      'data-we-collect': {
+        label: 'Data We Collect',
+        content: "Opens the in-app Data We Collect page.",
+        ctas: []
+      },
+      'terms-and-legal': {
+        label: 'Terms and Legal',
+        content: "Opens the Terms of Service page.",
+        ctas: []
+      }
+    }
+  }
+
+};
+
+// ══════════════════════════════════════════════════════════
+// Message State
+// ══════════════════════════════════════════════════════════
+// Each message: { id, type, ...fields }
+// side: 'bot' renders left; 'user' renders right
+//
+// Types:
+//   bot-text        — plain content bubble (left)
+//   bot-chips       — chip options (left, collapses when answered)
+//   bot-ctas        — CTA chips (left, collapses when answered)
+//   bot-illustration— illustration placeholder (left)
+//   user-bubble     — what the user tapped (right)
+// ══════════════════════════════════════════════════════════
+
+let messages = [];
+let nextId = 0;
+function uid() { return nextId++; }
+
+// ── Message Adders ─────────────────────────────────────────
+function addBotText(text, title) {
+  messages.push({ id: uid(), type: 'bot-text', text, title: title || null });
+}
+
+function addBotChips(chips) {
+  // chips: [{label, icon?, color?, fn, args}]
+  messages.push({ id: uid(), type: 'bot-chips', chips, answered: false });
+}
+
+function addBotCtas(ctas) {
+  messages.push({ id: uid(), type: 'bot-ctas', ctas, answered: false });
+}
+
+function addBotIllustration(text) {
+  messages.push({ id: uid(), type: 'bot-illustration', text });
+}
+
+function addUserBubble(text) {
+  messages.push({ id: uid(), type: 'user-bubble', text });
+}
+
+// ── Answer Helpers ─────────────────────────────────────────
+// Mark the last unanswered chips/ctas as answered so they collapse.
+function answerChips() {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].type === 'bot-chips' && !messages[i].answered) {
+      messages[i].answered = true;
+      break;
+    }
+  }
+}
+
+function answerCtas() {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].type === 'bot-ctas' && !messages[i].answered) {
+      messages[i].answered = true;
+      break;
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// Flow Controllers
+// ══════════════════════════════════════════════════════════
+
+function init() {
+  messages = [];
+  nextId = 0;
+  addBotText("What can I help you with?");
+  addBotChips(
+    Object.entries(TREE).map(([key, cat]) => ({
+      label: cat.label,
+      icon: cat.icon,
+      color: cat.color,
+      fn: 'selectL1',
+      args: [key]
+    }))
+  );
+  renderAndScroll();
+}
+
+function selectL1(l1Key) {
+  answerChips();
+  addUserBubble(TREE[l1Key].label);
+  addBotChips(
+    Object.entries(TREE[l1Key].items).map(([key, item]) => ({
+      label: item.label,
+      fn: 'selectL2',
+      args: [l1Key, key]
+    }))
+  );
+  renderAndScroll();
+}
+
+function selectL2(l1Key, l2Key) {
+  const item = TREE[l1Key].items[l2Key];
+  answerChips();
+  addUserBubble(item.label);
+  if (item.subitems) {
+    addBotChips(
+      Object.entries(item.subitems).map(([key, sub]) => ({
+        label: sub.label,
+        fn: 'selectL3',
+        args: [l1Key, l2Key, key]
+      }))
+    );
+  } else {
+    pushItemContent(item);
+  }
+  renderAndScroll();
+}
+
+function selectL3(l1Key, l2Key, l3Key) {
+  const sub = TREE[l1Key].items[l2Key].subitems[l3Key];
+  answerChips();
+  addUserBubble(sub.label);
+  pushItemContent(sub);
+  renderAndScroll();
+}
+
+function pushItemContent(item) {
+  if (item.content) {
+    addBotText(item.content, item.label);
+  } else {
+    // null content = direct-link Settings pages
+    addBotText("Tap below to open this section directly in the app.", item.label);
+  }
+  if (item.illustration) {
+    addBotIllustration(item.illustration);
+  }
+  if (item.ctas && item.ctas.length > 0) {
+    addBotCtas(item.ctas);
+  }
+}
+
+// ── CTA Handler ────────────────────────────────────────────
+function handleCta(ctaJson) {
+  const cta = JSON.parse(decodeURIComponent(ctaJson));
+  answerCtas();
+
+  if (cta.type === 'take_me_there') {
+    addUserBubble("Take me there");
+    addBotText("Opening that section\u2026 (navigation placeholder)");
+  } else if (cta.type === 'contact_support') {
+    addUserBubble("Contact support");
+    addBotText("Connecting you to support\u2026 (placeholder)");
+  } else if (cta.type === 'verify_me_now') {
+    addUserBubble("Verify me now");
+    addBotText("Opening Twilio verification\u2026 (navigation placeholder)");
+  } else if (cta.type === 'nav') {
+    addUserBubble(cta.label);
+    const l2Item = TREE[cta.l1].items[cta.l2];
+    const item = cta.l3 && l2Item.subitems ? l2Item.subitems[cta.l3] : l2Item;
+    pushItemContent(item);
+  }
+  renderAndScroll();
+}
+
+// ══════════════════════════════════════════════════════════
+// Render
+// ══════════════════════════════════════════════════════════
+
+function render() {
+  const app = document.getElementById('app');
+  let html = renderHeader();
+  html += '<div class="thread" id="thread">';
+  let prevSide = null;
+  for (const msg of messages) {
+    const side = msg.type === 'user-bubble' ? 'user' : 'bot';
+    const groupGap = (side !== prevSide && prevSide !== null) ? ' gap-top' : '';
+    html += renderMessage(msg, groupGap);
+    prevSide = side;
+  }
+  html += '</div>';
+  app.innerHTML = html;
+}
+
+function renderAndScroll() {
+  render();
+  requestAnimationFrame(() => {
+    const thread = document.getElementById('thread');
+    if (thread) thread.scrollTop = thread.scrollHeight;
+  });
+}
+
+// ── Header ─────────────────────────────────────────────────
+function renderHeader() {
+  return `
+    <div class="conv-header">
+      <div class="header-text">
+        <span class="conv-header-title">WhyHi Help</span>
+      </div>
+      <button class="start-over-btn" onclick="init()">Start over</button>
+    </div>`;
+}
+
+// ── Message Dispatch ───────────────────────────────────────
+function renderMessage(msg, gapClass) {
+  switch (msg.type) {
+    case 'bot-text':         return renderBotText(msg, gapClass);
+    case 'bot-chips':        return renderBotChips(msg, gapClass);
+    case 'bot-ctas':         return renderBotCtas(msg, gapClass);
+    case 'bot-illustration': return renderBotIllustration(msg, gapClass);
+    case 'user-bubble':      return renderUserBubble(msg, gapClass);
+    default: return '';
+  }
+}
+
+// ── Bot: plain text bubble ─────────────────────────────────
+function renderBotText(msg, gapClass) {
+  const titleHtml = msg.title
+    ? `<div class="bot-bubble-title">${escapeHtml(msg.title)}</div>`
+    : '';
+  return `<div class="msg-row bot${gapClass}">
+    <div class="bot-bubble">${titleHtml}${formatContent(msg.text)}</div>
+  </div>`;
+}
+
+// ── Bot: chip options (collapses when answered) ────────────
+function renderBotChips(msg, gapClass) {
+  if (msg.answered) return '';
+  let html = `<div class="msg-row user chip-row${gapClass}">
+    <div class="chip-cloud">`;
+  for (const chip of msg.chips) {
+    const colorStyle = chip.color ? `border-left: 3px solid ${chip.color}` : '';
+    const iconHtml = chip.icon
+      ? `<span class="material-icons conv-chip-icon" style="color:${chip.color}">${chip.icon}</span>`
+      : '';
+    // Safely encode args for inline onclick
+    const argsStr = chip.args.map(a => `'${a}'`).join(', ');
+    html += `<button class="conv-chip" style="${colorStyle}" onclick="${chip.fn}(${argsStr})">
+      ${iconHtml}
+      <span class="conv-chip-label">${escapeHtml(chip.label)}</span>
+    </button>`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+// ── Bot: CTA chips (collapses when answered) ───────────────
+function renderBotCtas(msg, gapClass) {
+  if (msg.answered) return '';
+  let html = `<div class="msg-row user chip-row${gapClass}">
+    <div class="chip-cloud cta-cloud">`;
+  for (const cta of msg.ctas) {
+    const encoded = encodeURIComponent(JSON.stringify(cta));
+    let cls = 'cta-chip';
+    let icon = 'arrow_forward';
+    if (cta.type === 'take_me_there') { cls += ' cta-primary'; icon = 'arrow_forward'; }
+    if (cta.type === 'contact_support') { cls += ' cta-support'; icon = 'support_agent'; }
+    if (cta.type === 'nav') { cls += ' cta-nav'; icon = 'arrow_forward'; }
+    if (cta.type === 'verify_me_now') { cls += ' cta-primary'; icon = 'verified'; }
+    const label = cta.type === 'take_me_there' ? 'Take me there'
+                : cta.type === 'contact_support' ? 'Contact support'
+                : cta.type === 'verify_me_now' ? 'Verify me now'
+                : cta.label;
+    html += `<button class="${cls}" onclick="handleCta('${encoded}')">
+      <span class="material-icons">${icon}</span>
+      ${escapeHtml(label)}
+    </button>`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+// ── Bot: illustration placeholder ─────────────────────────
+function renderBotIllustration(msg, gapClass) {
+  return `<div class="msg-row bot${gapClass}">
+    <div class="illustration-placeholder">
+      <span class="material-icons illustration-icon">photo_camera</span>
+      <span class="illustration-label"><strong>[${escapeHtml(msg.text)}]</strong></span>
+    </div>
+  </div>`;
+}
+
+// ── User: selection bubble ─────────────────────────────────
+function renderUserBubble(msg, gapClass) {
+  return `<div class="msg-row user${gapClass}">
+    <div class="user-bubble">${escapeHtml(msg.text)}</div>
+  </div>`;
+}
+
+// ── Helpers ────────────────────────────────────────────────
+function formatContent(text) {
+  return escapeHtml(text).replace(/\n/g, '<br>');
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ── Boot ───────────────────────────────────────────────────
+init();
+
+  </script>
+</body>
+</html>
